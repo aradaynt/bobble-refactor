@@ -8,6 +8,10 @@ class PlayScreen:
         self.game = Game(Player())
 
     def update(self, input_state: InputState):
+        if input_state.pause_pressed:
+            self.app.switch_to_pause()
+            return
+        
         if self.game.player.lives < 0:
             self.app.switch_to_game_over()
         else:

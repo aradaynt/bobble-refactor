@@ -230,6 +230,7 @@ class Fruit(GravityActor):
 class Player(GravityActor):
     def __init__(self):
         super().__init__((0, 0))
+
         self.lives = 2
         self.score = 0
 
@@ -256,8 +257,8 @@ class Player(GravityActor):
             return True
         else:
             return False
-
-    def update(self):
+        
+    def update(self, input_state): 
         super().update(self.health > 0)
 
         self.fire_timer -= 1
@@ -275,17 +276,17 @@ class Player(GravityActor):
                     self.reset()
         else:
             dx = 0
-            if keyboard.left:
+            if input_state.left:
                 dx = -1
-            elif keyboard.right:
+            elif input_state.right:
                 dx = 1
 
             if dx != 0:
                 self.direction_x = dx
                 if self.fire_timer < 10:
                     self.move(dx, 0, 4)
-                    
-            if keyboard.space and self.fire_timer <= 0 and len(game.orbs) < 5:
+
+            if input_state.fire_pressed and self.fire_timer <= 0 and len(game.orbs) < 5:
                 x = min(730, max(70, self.x + self.direction_x * 38))
                 y = self.y - 35
                 self.blowing_orb = Orb((x,y), self.direction_x)
@@ -293,12 +294,12 @@ class Player(GravityActor):
                 game.play_sound("blow", 4)
                 self.fire_timer = 20
 
-            if keyboard.up and self.vel_y == 0 and self.landed:
+            if input_state.jump_pressed and self.vel_y == 0 and self.landed:
                 self.vel_y = -16
                 self.landed = False
                 game.play_sound("jump")
 
-        if keyboard.space:
+        if input_state.fire_held:
             if self.blowing_orb:
                 self.blowing_orb.blown_frames += 4
                 if self.blowing_orb.blown_frames >= 120:
@@ -440,10 +441,13 @@ class Game:
                 return GRID_BLOCK_SIZE * grid_x + LEVEL_X_OFFSET + 12
         return WIDTH/2
 
-    def update(self):
+    def update(self, input_state):
         self.timer += 1
 
-        for obj in self.fruits + self.bolts + self.enemies + self.pops + [self.player] + self.orbs:
+        if self.player:
+            self.player.update(input_state)
+
+        for obj in self.fruits + self.bolts + self.enemies + self.pops + self.orbs:
             if obj:
                 obj.update()
 

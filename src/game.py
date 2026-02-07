@@ -1,6 +1,6 @@
 import pygame
 from pgzero.actor import Actor
-from pgzero.keyboard import keyboard
+from pgzero.builtins import sounds
 from random import choice, randint, random, shuffle
 import sys
 
@@ -469,7 +469,7 @@ class Game:
             if len([orb for orb in self.orbs if orb.trapped_enemy_type != None]) == 0:
                 self.next_level()
 
-    def draw(self):
+    def draw(self, screen):
         screen.blit("bg%d" % self.level_colour, (0, 0))
 
         block_sprite = "block" + str(self.level % 4)
@@ -485,12 +485,15 @@ class Game:
 
         all_objs = self.fruits + self.bolts + self.enemies + self.pops + self.orbs
         all_objs.append(self.player)
+        
         for obj in all_objs:
             if obj:
                 obj.draw()
 
+        draw_status(screen)
+
     def play_sound(self, name, count=1):
-        if self.player:
+        if self.player and sounds:
             try:
                 sound = getattr(sounds, name + str(randint(0, count - 1)))
                 sound.play()
@@ -504,7 +507,7 @@ def char_width(char):
     index = max(0, ord(char) - 65)
     return CHAR_WIDTH[index]
 
-def draw_text(text, y, x=None):
+def draw_text(screen, text, y, x=None):
     if x == None:
         x = (WIDTH - sum([char_width(c) for c in text])) // 2
 
@@ -514,14 +517,14 @@ def draw_text(text, y, x=None):
 
 IMAGE_WIDTH = {"life":44, "plus":40, "health":40}
 
-def draw_status():
+def draw_status(screen):
     if not game: return
     
     number_width = CHAR_WIDTH[0]
     s = str(game.player.score)
-    draw_text(s, 451, WIDTH - 2 - (number_width * len(s)))
+    draw_text(screen, s, 451, WIDTH - 2 - (number_width * len(s)))
 
-    draw_text("LEVEL " + str(game.level + 1), 451)
+    draw_text(screen, "LEVEL " + str(game.level + 1), 451)
 
     lives_health = ["life"] * min(2, game.player.lives)
     if game.player.lives > 2:

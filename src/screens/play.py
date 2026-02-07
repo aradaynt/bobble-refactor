@@ -17,5 +17,7 @@ class PlayScreen:
         else:
             self.game.update(input_state)
 
-    def draw(self):
-        self.game.draw()
+    def draw(self,screen):
+        screen.clear()
+        screen.blit("bg0", (0, 0))
+        self.game.draw(screen)

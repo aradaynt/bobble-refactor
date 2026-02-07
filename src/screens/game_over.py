@@ -9,8 +9,8 @@ class GameOverScreen:
         if input_state.fire_pressed:
             self.app.switch_to_menu()
 
-    def draw(self):
+    def draw(self,screen):
         if self.final_game:
-            self.final_game.draw()
+            self.final_game.draw(screen)
         
         screen.blit("over", (0, 0))

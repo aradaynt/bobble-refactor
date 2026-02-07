@@ -11,9 +11,9 @@ class App:
         if self.active_screen:
             self.active_screen.update(input_state)
 
-    def draw(self):
+    def draw(self, screen):
         if self.active_screen:
-            self.active_screen.draw()
+            self.active_screen.draw(screen)
 
     def switch_to_play(self):
         self.active_screen = PlayScreen(self)

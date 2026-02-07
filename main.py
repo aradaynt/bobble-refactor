@@ -21,6 +21,6 @@ def update():
 
 def draw():
     screen.clear()
-    app.draw()
+    app.draw(screen)
 
 pgzrun.go()

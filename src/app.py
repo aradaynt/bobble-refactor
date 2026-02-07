@@ -1,6 +1,7 @@
 from src.screens.menu import MenuScreen
 from src.screens.play import PlayScreen
 from src.screens.game_over import GameOverScreen
+from src.screens.pause import PauseScreen
 
 class App:
     def __init__(self):
@@ -22,3 +23,11 @@ class App:
     
     def switch_to_game_over(self):
         self.active_screen = GameOverScreen(self)
+
+    def switch_to_pause(self):
+        # We only pause if we are currently in PlayScreen
+        if isinstance(self.active_screen, PlayScreen):
+            self.active_screen = PauseScreen(self, self.active_screen)
+    
+    def resume_play(self, play_screen_instance):
+        self.active_screen = play_screen_instance
